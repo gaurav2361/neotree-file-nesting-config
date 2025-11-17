@@ -1,568 +1,245 @@
-local buildTools = {
-  "build.config.*",
-  "electron-builder.*",
-  "grunt*",
-  "gulp*",
-  "rolldown.config.*",
-  "rollup.config.*",
-  "tsup.config.*",
-  "tsdown.config.*",
-  "webpack*",
-  "rspack*",
-}
+--- Convert VSCode file nesting config to Neo-tree format
+--- This script reads the VSCode config and converts it to Neo-tree Lua format
 
-local dependencyAnalysis = { "knip.*", ".knip.*" }
+local json_file = "/tmp/vscode-config.json"
 
-local syntaxHighlighting = { "ec.config.*" }
-
-local testingTools = {
-  ".codecov",
-  ".lighthouserc.*",
-  ".mocha*",
-  "ava.config.*",
-  "cypress.*",
-  "histoire.config.*",
-  "jasmine.*",
-  "jest.config.*",
-  "karma*",
-  "lighthouserc.*",
-  "playwright.config.*",
-  "puppeteer.config.*",
-  "vitest.config.*",
-}
-
-local tsconfig = { "api-extractor.json", "jsconfig.*", "tsconfig.*", "tsdoc.*" }
-
-local services = {
-  ".circleci*",
-  ".cursorrules",
-  ".firebase*",
-  ".github*",
-  ".gitlab*",
-  ".gitpod*",
-  ".sentry*",
-  ".stackblitz*",
-  ".styleci*",
-  ".travis*",
-  "appveyor*",
-  "azure-pipelines*",
-  "colada.options.ts",
-  "crowdin*",
-  "jenkins*",
-  "netlify*",
-  "nixpacks*",
-  "Procfile",
-  "pullapprove*",
-  "release-tasks.sh",
-  "renovate*",
-  "sentry.*.config.ts",
-  "sonar-project.properties",
-  "unlighthouse*",
-  "vercel*",
-  "wrangler.*",
-}
-
-local linters = {
-  ".commitlint*",
-  ".cspell*",
-  ".dlint.json",
-  ".dprint.json*",
-  ".editorconfig",
-  ".eslint*",
-  ".flowconfig",
-  ".jslint*",
-  ".lintstagedrc*",
-  ".ls-lint.yml",
-  ".markdownlint*",
-  ".prettier*",
-  ".pylintrc",
-  ".ruff.toml",
-  ".shellcheckrc",
-  ".stylelint*",
-  ".textlint*",
-  ".xo-config*",
-  ".yamllint*",
-  "biome.json*",
-  "commitlint*",
-  "cspell*",
-  "dangerfile*",
-  "dlint.json",
-  "dprint.json*",
-  "eslint*",
-  "lint-staged*",
-  "phpcs.xml",
-  "prettier*",
-  "pyrightconfig.json",
-  "ruff.toml",
-  "stylelint*",
-  "tslint*",
-  "xo.config.*",
-}
-
-local env = { ".env.*", ".envrc", "*.env", "env.d.ts" }
-
-local workspaces = {
-  ".gitmojirc.json",
-  ".huskyrc*",
-  ".node-version",
-  ".npm*",
-  ".nvmrc",
-  ".pnp.*",
-  ".pnpm*",
-  ".release-please*.json",
-  ".releaserc*",
-  ".simple-git-hooks*",
-  ".tazerc*",
-  ".tool-versions",
-  ".yarnrc*",
-  "*.code-workspace",
-  "bower.json",
-  "bun.lock",
-  "bun.lockb",
-  "bunfig.toml",
-  "firebase.json",
-  "lerna*",
-  "npm-shrinkwrap.json",
-  "nx.*",
-  "package-lock.json",
-  "package.nls*.json",
-  "pnpm*",
-  "release-please*.json",
-  "release.config.*",
-  "simple-git-hooks*",
-  "turbo*",
-  "workspace.json",
-  "yarn*",
-}
-
-local docker = {
-  "dockerfile*",
-  "*.dockerfile",
-  ".dockerignore",
-  "docker-compose.*",
-  "compose.*",
-  ".devcontainer.*",
-  "captain-definition",
-}
-
-local tex = {
-  "%1.acn",
-  "%1.acr",
-  "%1.alg",
-  "%1.aux",
-  "%1.bbl-SAVE-ERROR",
-  "%1.bbl",
-  "%1.bcf",
-  "%1.blg",
-  "%1.fdb_latexmk",
-  "%1.fls",
-  "%1.glg",
-  "%1.glo",
-  "%1.gls",
-  "%1.idx",
-  "%1.ind",
-  "%1.ist",
-  "%1.lof",
-  "%1.log",
-  "%1.lot",
-  "%1.nav",
-  "%1.out",
-  "%1.run.xml",
-  "%1.snm",
-  "%1.synctex.gz",
-  "%1.toc",
-  "%1.xdv",
-}
-
-local frameworks = {
-  ["app.config.*"] = {},
-  ["artisan"] = { "server.php", "webpack.mix.js" },
-  ["astro.config.*"] = {},
-  ["gatsby-config.*"] = { "gatsby-browser.*", "gatsby-node.*", "gatsby-ssr.*", "gatsby-transformer.*" },
-  ["next.config.*"] = { "next-env.d.ts", "next-i18next.config.*" },
-  ["nuxt.config.*"] = { ".nuxtignore", ".nuxtrc" },
-  ["quasar.conf.js"] = { "quasar.extensions.json" },
-  ["remix.config.*"] = { "remix.*" },
-  ["svelte.config.*"] = { "mdsvex.config.js", "vite.config.*", "houdini.config.*" },
-  ["vite.config.*"] = {},
-  ["vue.config.*"] = {},
-}
-
-local libraries = {
-  ".babelrc*",
-  ".cssnanorc*",
-  ".htmlnanorc*",
-  ".postcssrc*",
-  ".terserrc*",
-  "babel.config.*",
-  "capacitor.config.*",
-  "content.config.*",
-  "contentlayer.config.*",
-  "cssnano.config.*",
-  "drizzle.config.*",
-  "formkit.config.*",
-  "formulate.config.*",
-  "htmlnanorc.*",
-  "i18n.config.*",
-  "ionic.config.*",
-  "panda.config.*",
-  "postcss.config.*",
-  "react-router.config.*",
-  "rspack.config.*",
-  "sst.config.*",
-  "svgo.config.*",
-  "tailwind.config.*",
-  "uno.config.*",
-  "unocss.config.*",
-  "vuetify.config.*",
-  "webpack.config.*",
-  "windi.config.*",
-}
-for i = 1, #env do
-  table.insert(libraries, env[i])
-end
-for i = 1, #testingTools do
-  table.insert(libraries, testingTools[i])
-end
-for i = 1, #tsconfig do
-  table.insert(libraries, tsconfig[i])
-end
-
-local packageJSON = {
-  ".browserslist*",
-  ".cz-config.js",
-  ".czrc",
-  "components.*",
-  ".nodemon*",
-  ".pm2*",
-  ".versionrc*",
-  ".vscode*",
-  ".watchman*",
-  "apollo.config.*",
-  "nest-cli.*",
-  "nodemon*",
-  "pm2.*",
-  "typedoc*",
-  "vetur.config.*",
-}
-for i = 1, #workspaces do
-  table.insert(packageJSON, workspaces[i])
-end
-for i = 1, #buildTools do
-  table.insert(packageJSON, buildTools[i])
-end
-for i = 1, #services do
-  table.insert(packageJSON, services[i])
-end
-for i = 1, #linters do
-  table.insert(packageJSON, linters[i])
-end
-for i = 1, #dependencyAnalysis do
-  table.insert(packageJSON, dependencyAnalysis[i])
-end
-for i = 1, #syntaxHighlighting do
-  table.insert(packageJSON, syntaxHighlighting[i])
-end
-
-local readme = {
-  "AUTHORS",
-  "BACKERS*",
-  "CHANGELOG*",
-  "CITATION*",
-  "CODE_OF_CONDUCT*",
-  "CODEOWNERS",
-  "CONTRIBUTING*",
-  "CONTRIBUTORS",
-  "COPYING*",
-  "CREDITS",
-  "GOVERNANCE.MD",
-  "HISTORY.MD",
-  "LICENSE*",
-  "MAINTAINERS",
-  "README_*",
-  "RELEASE_NOTES*",
-  "ROADMAP.MD",
-  "SECURITY.MD",
-  "SPONSORS*",
-  "README-*",
-}
-
-local cargo = {
-  ".clippy.toml",
-  ".rustfmt.toml",
-  "Cargo.Bazel.lock",
-  "Cargo.lock",
-  "clippy.toml",
-  "cross.toml",
-  "insta.yaml",
-  "rust-toolchain.toml",
-  "rustfmt.toml",
-}
-
-local gofile = { "go.sum", ".air*" }
-
-local gemfile = { "gemfile.lock", ".ruby-version" }
-
-local composer = { "composer.lock", "phpunit.xml*", "psalm*.xml", ".php*.cache" }
-
-local dotnetProject = { "*proj.user", "*.config", "appsettings.*", "bundleconfig.json" }
-
-local pubspecYAML = {
-  ".metadata",
-  ".packages",
-  "all_lint_rules.yaml",
-  "analysis_options.yaml",
-  "build.yaml",
-  "pubspec.lock",
-  "pubspec_overrides.yaml",
-}
-
-local elixir = { "mix.lock", ".formatter.exs", ".credo.exs", ".dialyzer_ignore.exs", ".iex.exs", ".tool-versions" }
-
-local pythonConfigs = { "tox.ini", ".flake8", ".isort.cfg", ".python-version" }
-
-local requirementstxt = { "requirements*.txt", "requirements*.in", "requirements*.pip" }
-
-for i = 1, #pythonConfigs do
-  table.insert(requirementstxt, pythonConfigs[i])
-end
-
-local setupcfg = { "setup.cfg", "MANIFEST.in" }
-
-for i = 1, #requirementstxt do
-  table.insert(setupcfg, requirementstxt[i])
-end
-
-local setuppy = { "setup.py" }
-for i = 1, #setupcfg do
-  table.insert(setuppy, setupcfg[i])
-end
-
-local pipfile = { "Pipfile", "Pipfile.lock" }
-for i = 1, #requirementstxt do
-  table.insert(pipfile, requirementstxt[i])
-end
-
-local hatchtoml = { "hatch.toml" }
-for i = 1, #requirementstxt do
-  table.insert(hatchtoml, requirementstxt[i])
-end
-
-local pyprojecttoml = {
-  -- the one config file to rule them all
-  "pyproject.toml",
-  "pdm.lock",
-  ".pdm.toml",
-  ".pdm-python",
-  "poetry.lock",
-  "poetry.toml",
-  "uv.lock",
-  "uv.toml",
-}
-for i = 1, #setuppy do
-  table.insert(pyprojecttoml, setuppy[i])
-end
-for i = 1, #pipfile do
-  table.insert(pyprojecttoml, pipfile[i])
-end
-for i = 1, #hatchtoml do
-  table.insert(pyprojecttoml, hatchtoml[i])
-end
-for i = 1, #linters do
-  table.insert(pyprojecttoml, linters[i])
-end
-
-local phoenixLiveView = { "%1.html.eex", "%1.html.leex", "%1.html.heex" }
-
-local denoRuntime = { "import_map.json", "import-map.json", "deno.lock" }
-for i = 1, #tsconfig do
-  table.insert(denoRuntime, tsconfig[i])
-end
-for i = 1, #env do
-  table.insert(denoRuntime, env[i])
-end
-
-local sqlite = { "*.db-shm", "*.db-wal" }
-
-local razor = { "%1.razor.css", "%1.razor.scss", "%1.razor.cs" }
-local sanity = { "sanity.cli.*", "sanity.types.ts", "schema.json" }
-
-local base = {
-  [".clang-tidy"] = ".clang-format, .clangd, compile_commands.json",
-  [".gitignore"] = ".gitattributes, .gitmodules, .gitmessage, .lfsconfig, .mailmap, .git-blame*",
-  [".project"] = ".classpath",
-  ["*.asax"] = "%1.*.cs, %1.*.vb",
-  ["*.ascx"] = "%1.*.cs, %1.*.vb",
-  ["*.ashx"] = "%1.*.cs, %1.*.vb",
-  ["*.aspx"] = "%1.*.cs, %1.*.vb",
-  ["*.axaml"] = "%1.axaml.cs",
-  ["*.bloc.dart"] = "%1.event.dart, %1.state.dart",
-  ["*.c"] = "%1.h",
-  ["*.cc"] = "%1.hpp, %1.h, %1.hxx, %1.hh",
-  ["*.cjs"] = "%1.cjs.map, %1.*.cjs, %1_*.cjs",
-  ["*.component.ts"] = "%1.component.html, %1.component.spec.ts, %1.component.css, %1.component.scss, %1.component.sass, %1.component.less",
-  ["*.cpp"] = "%1.hpp, %1.h, %1.hxx, %1.hh",
-  ["*.cs"] = "%1.*.cs",
-  ["*.cshtml"] = "%1.cshtml.cs",
-  ["*.css"] = "%1.css.map, %1.*.css",
-  ["*.cxx"] = "%1.hpp, %1.h, %1.hxx, %1.hh",
-  ["*.dart"] = "%1.freezed.dart, %1.g.dart",
-  ["*.fs"] = "%1.fs.js, %1.fs.js.map, %1.fs.jsx, %1.fs.ts, %1.fs.tsx, %1.fs.rs, %1.fs.php, %1.fs.dart",
-  ["*.go"] = "%1_test.go",
-  ["*.java"] = "%1.class",
-  ["*.js"] = "%1.js.map, %1.*.js, %1_*.js, %1.d.ts, %1.js.flow",
-  ["*.jsx"] = "%1.js, %1.*.jsx, %1_*.js, %1_*.jsx, %1.css, %1.module.css, %1.less, %1.module.less, %1.module.less.d.ts, %1.scss, %1.module.scss, %1.module.scss.d.ts",
-  ["*.master"] = "%1.*.cs, %1.*.vb",
-  ["*.md"] = "%1.*",
-  ["*.mjs"] = "%1.mjs.map, %1.*.mjs, %1_*.mjs",
-  ["*.module.ts"] = "%1.resolver.ts, %1.controller.ts, %1.service.ts",
-  ["*.mts"] = "%1.mts.map, %1.*.mts, %1_*.mts",
-  ["*.pubxml"] = "%1.pubxml.user",
-  ["*.py"] = "%1.pyi",
-  ["*.resx"] = "%1.*.resx, %1.designer.cs, %1.designer.vb",
-  ["*.ts"] = "%1.js, %1.d.ts.map, %1.*.ts, %1_*.js, %1_*.ts",
-  ["*.tsx"] = "%1.ts, %1.*.tsx, %1_*.ts, %1_*.tsx, %1.css, %1.module.css, %1.less, %1.module.less, %1.module.less.d.ts, %1.scss, %1.module.scss, %1.module.scss.d.ts, %1.css.ts",
-  ["*.vue"] = "%1.*.ts, %1.*.js, %1.story.vue",
-  ["*.w"] = "%1.*.w, I%1.w",
-  ["*.xaml"] = "%1.xaml.cs",
-  ["ansible.cfg"] = "ansible.cfg, .ansible-lint, requirements.yml",
-  ["build-wrapper.log"] = "build-wrapper*.log, build-wrapper-dump*.json, build-wrapper-win*.exe, build-wrapper-linux*, build-wrapper-macosx*",
-  ["BUILD.bazel"] = "*.bzl, *.bazel, *.bazelrc, bazel.rc, .bazelignore, .bazelproject, .bazelversion, MODULE.bazel.lock, WORKSPACE",
-  ["CMakeLists.txt"] = "*.cmake, *.cmake.in, .cmake-format.yaml, CMakePresets.json, CMakeCache.txt",
-  ["default.nix"] = "shell.nix",
-  ["flake.nix"] = "flake.lock",
-  ["go.mod"] = "go.sum",
-  ["go.work"] = "go.work.sum",
-  ["I*.cs"] = "%1.cs",
-  ["Makefile"] = "*.mk",
-  ["shims.d.ts"] = "*.d.ts",
-}
-
-local svelteKitRouting = {
-  ["+page.svelte"] = "+page.server.ts,+page.server.js,+page.ts,+page.js,+page.gql",
-  ["+layout.svelte"] = "+layout.ts,+layout.ts,+layout.js,+layout.server.ts,+layout.server.js,+layout.gql",
-}
-
-local sortObject = function(obj, fn)
-  fn = fn or function(a, b)
-    return a < b
+-- Read JSON file
+local function read_file(path)
+  local file = io.open(path, "r")
+  if not file then
+    print("Error: Could not open file: " .. path)
+    os.exit(1)
   end
-  local keys = {}
-  for key in pairs(obj) do
-    table.insert(keys, key)
-  end
-  table.sort(keys, fn)
-  local sortedObj = {}
-  for _, key in ipairs(keys) do
-    sortedObj[key] = obj[key]
-  end
-  return sortedObj
+  local content = file:read("*all")
+  file:close()
+  return content
 end
 
-local convertBaseTable = function(tbl)
-  local result = {}
-  for name, str in pairs(tbl) do
-    local pattern = string.gsub(name, "%.", "%%.") -- escape dots
-    pattern = string.gsub(pattern, "%*", "(.*)") -- convert * to Lua pattern
-    pattern = pattern .. "$" -- add end of string anchor
+-- Simple JSON parser for the specific format we need
+local function parse_json(json_str)
+  -- Remove comments (// style)
+  json_str = json_str:gsub("//[^\n]*\n", "\n")
 
-    local files = {}
-    for file in string.gmatch(str, "([^,]+)") do
-      local glob = string.gsub(file, "%.", "%%.") -- escape dots
-      glob = string.gsub(glob, "%%1", "%%1") -- convert %1 to Lua capture
-      glob = string.gsub(glob, "%s+", "") -- remove spaces
-      table.insert(files, glob)
+  -- Find the explorer.fileNesting.patterns object
+  local patterns_start = json_str:find('"explorer%.fileNesting%.patterns"%s*:%s*{')
+  if not patterns_start then
+    print("Error: Could not find explorer.fileNesting.patterns in JSON")
+    os.exit(1)
+  end
+
+  -- Extract the patterns object
+  local depth = 0
+  local start_brace = json_str:find("{", patterns_start)
+  local current = start_brace
+  local end_brace = nil
+
+  while current <= #json_str do
+    local char = json_str:sub(current, current)
+    if char == "{" then
+      depth = depth + 1
+    elseif char == "}" then
+      depth = depth - 1
+      if depth == 0 then
+        end_brace = current
+        break
+      end
     end
+    current = current + 1
+  end
 
-    result[name] = {
+  if not end_brace then
+    print("Error: Could not parse JSON structure")
+    os.exit(1)
+  end
+
+  local patterns_json = json_str:sub(start_brace, end_brace)
+
+  -- Parse key-value pairs
+  local patterns = {}
+  -- Match "key": "value" pairs, handling escaped quotes
+  for key, value in patterns_json:gmatch('"([^"]+)"%s*:%s*"([^"]*)"') do
+    patterns[key] = value
+  end
+
+  return patterns
+end
+
+-- Convert VSCode glob pattern to Lua pattern
+local function glob_to_lua_pattern(glob)
+  -- Escape special Lua pattern characters
+  local pattern = glob:gsub("([%.%+%-%^%$%(%)%%])", "%%%1")
+
+  -- Convert glob wildcards to Lua patterns
+  pattern = pattern:gsub("%*", "(.*)") -- * becomes (.*)
+
+  -- Add end anchor
+  pattern = pattern .. "$"
+
+  return pattern
+end
+
+-- Convert VSCode file list to Neo-tree format
+local function convert_file_list(file_str)
+  local files = {}
+
+  -- Split by comma
+  for file in file_str:gmatch("([^,]+)") do
+    -- Trim whitespace
+    file = file:match("^%s*(.-)%s*$")
+
+    -- Convert to Lua pattern
+    local lua_pattern = file:gsub("%.", "%%.") -- Escape dots
+    lua_pattern = lua_pattern:gsub("%%1", "%%1") -- Keep %1 as is for capture
+    lua_pattern = lua_pattern:gsub("%*", "*") -- Keep * as glob
+    lua_pattern = lua_pattern:gsub("*", "%.*") -- Convert * to .*
+
+    -- Re-do it properly
+    lua_pattern = file:gsub("%.", "%%.") -- Escape dots
+    lua_pattern = lua_pattern:gsub("%*", "%%.*") -- Convert * to .*
+    lua_pattern = lua_pattern:gsub("%%%%1", "%%1") -- Fix %1 captures
+
+    table.insert(files, lua_pattern)
+  end
+
+  return files
+end
+
+-- Check if pattern should have ignore_case flag
+local function should_ignore_case(key)
+  -- README.* should be case insensitive
+  return key:match("^README") ~= nil
+end
+
+-- Convert VSCode config to Neo-tree format
+local function convert_to_neotree(vscode_patterns)
+  local neotree_rules = {}
+
+  for key, value in pairs(vscode_patterns) do
+    local pattern = glob_to_lua_pattern(key)
+    local files = convert_file_list(value)
+
+    neotree_rules[key] = {
       pattern = pattern,
       files = files,
     }
-  end
-  return result
-end
 
-local function convertStringTable(name, tbl, ignoreCase)
-  local pattern = string.gsub(name, "%.", "%%.") -- escape dots
-  pattern = string.gsub(pattern, "%*", "(.*)") -- convert * to Lua pattern
-  pattern = pattern .. "$" -- add end of string anchor
-
-  local files = {}
-  for _, str in ipairs(tbl) do
-    local glob = string.gsub(str, "%.", "%%.") -- escape dots
-    glob = string.gsub(glob, "%%1", "%%1") -- convert %1 to Lua capture
-    glob = string.gsub(glob, "%s+", "") -- remove spaces
-    table.insert(files, glob)
-  end
-
-  local result = {
-    [name] = {
-      pattern = pattern,
-      files = files,
-    },
-  }
-
-  if ignoreCase then
-    result[name].ignore_case = true
-  end
-
-  return result
-end
-
-local function mergeTables(t1, t2)
-  for k, v in pairs(t2) do
-    if type(v) == "table" then
-      if type(t1[k] or false) == "table" then
-        mergeTables(t1[k] or {}, t2[k] or {})
-      else
-        t1[k] = v
-      end
-    else
-      t1[k] = v
+    if should_ignore_case(key) then
+      neotree_rules[key].ignore_case = true
     end
   end
-  return t1
+
+  return neotree_rules
 end
 
-local function stringify(item)
-  return vim.inspect(item, { indent = string.rep(" ", 2) })
+-- Sort table by keys
+local function sort_by_keys(tbl)
+  local keys = {}
+  for k in pairs(tbl) do
+    table.insert(keys, k)
+  end
+  table.sort(keys)
+
+  local sorted = {}
+  for _, k in ipairs(keys) do
+    sorted[k] = tbl[k]
+  end
+
+  return sorted
 end
 
-local full = convertBaseTable(base)
-full = mergeTables(full, convertStringTable(".env", env))
-full = mergeTables(full, convertStringTable("Dockerfile", docker))
-full = mergeTables(full, convertStringTable("package.json", packageJSON))
-full = mergeTables(full, convertStringTable("rush.json", packageJSON))
-full = mergeTables(full, convertStringTable("pubspec.yaml", pubspecYAML))
-full = mergeTables(full, convertStringTable("README.*", readme, true))
-full = mergeTables(full, convertStringTable("Cargo.toml", cargo))
-full = mergeTables(full, convertStringTable("gemfile", gemfile))
-full = mergeTables(full, convertStringTable("go.mod", gofile))
-full = mergeTables(full, convertStringTable("composer.json", composer))
-full = mergeTables(full, convertStringTable("*.csproj", dotnetProject))
-full = mergeTables(full, convertStringTable("*.vbproj", dotnetProject))
-full = mergeTables(full, convertStringTable("mix.exs", elixir))
-full = mergeTables(full, convertStringTable("pyproject.toml", pyprojecttoml))
-full = mergeTables(full, convertStringTable("setup.cfg", setupcfg))
-full = mergeTables(full, convertStringTable("setup.py", setuppy))
-full = mergeTables(full, convertStringTable("Pipfile", pipfile))
-full = mergeTables(full, convertStringTable("hatch.toml", hatchtoml))
-full = mergeTables(full, convertStringTable("requirements.txt", requirementstxt))
-full = mergeTables(full, convertStringTable("*.ex", phoenixLiveView))
-full = mergeTables(full, convertStringTable("*.tex", tex))
-full = mergeTables(full, convertStringTable("deno.json*", denoRuntime))
-full = mergeTables(full, convertStringTable("*.db", sqlite))
-full = mergeTables(full, convertStringTable("*.razor", razor))
-full = mergeTables(full, convertStringTable("sanity.config.*", sanity))
+-- Serialize Lua table to string
+local function serialize_table(tbl, indent_level)
+  indent_level = indent_level or 0
+  local indent = string.rep("  ", indent_level)
+  local next_indent = string.rep("  ", indent_level + 1)
 
-for n, i in pairs(frameworks) do
-  local merged = mergeTables(i, libraries)
-  local result = convertStringTable(n, merged)
-  full[n] = result[n]
+  local lines = {}
+  table.insert(lines, "{")
+
+  -- Check if it's an array
+  local is_array = true
+  local max_index = 0
+  for k, _ in pairs(tbl) do
+    if type(k) ~= "number" then
+      is_array = false
+      break
+    end
+    if k > max_index then
+      max_index = k
+    end
+  end
+
+  if is_array then
+    for i = 1, max_index do
+      if tbl[i] == nil then
+        is_array = false
+        break
+      end
+    end
+  end
+
+  if is_array then
+    -- Array format
+    for _, v in ipairs(tbl) do
+      local value_str
+      if type(v) == "string" then
+        value_str = "'" .. v:gsub("'", "\\'") .. "'"
+      elseif type(v) == "table" then
+        value_str = serialize_table(v, indent_level + 1)
+      else
+        value_str = tostring(v)
+      end
+      table.insert(lines, next_indent .. value_str .. ",")
+    end
+  else
+    -- Object format - sort keys
+    local keys = {}
+    for k in pairs(tbl) do
+      table.insert(keys, k)
+    end
+    table.sort(keys, function(a, b)
+      return tostring(a) < tostring(b)
+    end)
+
+    for _, k in ipairs(keys) do
+      local v = tbl[k]
+      local key_str = "['" .. k .. "']"
+      local value_str
+
+      if type(v) == "string" then
+        value_str = "'" .. v:gsub("'", "\\'") .. "'"
+      elseif type(v) == "boolean" then
+        value_str = tostring(v)
+      elseif type(v) == "table" then
+        value_str = serialize_table(v, indent_level + 1)
+      else
+        value_str = tostring(v)
+      end
+
+      table.insert(lines, next_indent .. key_str .. " = " .. value_str .. ",")
+    end
+  end
+
+  table.insert(lines, indent .. "}")
+  return table.concat(lines, "\n")
 end
 
-full = mergeTables(full, convertBaseTable(svelteKitRouting))
+-- Main execution
+print("Reading VSCode config from: " .. json_file)
+local json_content = read_file(json_file)
 
+print("Parsing JSON...")
+local vscode_patterns = parse_json(json_content)
+
+print("Found " .. vim.tbl_count(vscode_patterns) .. " patterns")
+
+print("Converting to Neo-tree format...")
+local neotree_rules = convert_to_neotree(vscode_patterns)
+
+-- Sort by keys for consistent output
+neotree_rules = sort_by_keys(neotree_rules)
+
+-- Generate output files
 local init_template = [[
 --- Generated by ./build/convert.lua
 --- DO NOT EDIT THIS FILE DIRECTLY
@@ -612,8 +289,8 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
       default_component_configs = {
         indent = {
           with_expanders = true,
-          expander_collapsed = '',
-          expander_expanded = '',
+          expander_collapsed = '',
+          expander_expanded = '',
         },
       },
       -- others config
@@ -645,8 +322,15 @@ Instead, go to `build/convert.lua`, make changes and then submit a PR. Thanks!
 - [vscode-file-nesting-config](https://github.com/antfu/vscode-file-nesting-config) - Who created all rules for vscode
 ]]
 
-local full_str = stringify(full)
-local init_output = init_template:format(full_str):gsub('"', "'")
-local readme_output = readme_template:format(os.date("%Y-%m-%d %H:%M"), full_str):gsub('"', "'")
+print("Generating output files...")
+local rules_str = serialize_table(neotree_rules)
+local init_output = string.format(init_template, rules_str):gsub('"', "'")
+local readme_output = string.format(readme_template, os.date("%Y-%m-%d %H:%M"), rules_str):gsub('"', "'")
+
+-- Write files
 vim.fn.writefile(vim.split(init_output, "\n"), "./lua/neotree-file-nesting-config.lua")
 vim.fn.writefile(vim.split(readme_output, "\n"), "./README.md")
+
+print("✓ Generated lua/neotree-file-nesting-config.lua")
+print("✓ Generated README.md")
+print("✓ Conversion complete!")
