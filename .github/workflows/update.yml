@@ -16,10 +16,11 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Lua
-        uses: leafo/gh-actions-lua@v10
+      - name: Setup Neovim
+        uses: rhysd/action-setup-vim@v1
         with:
-          luaVersion: "5.4"
+          neovim: true
+          version: stable
 
       - name: Fetch latest VSCode config
         id: fetch
@@ -55,8 +56,8 @@ jobs:
       - name: Convert to Neo-tree format
         if: steps.fetch.outputs.has_changes == 'true'
         run: |
-          # Run the conversion script
-          lua build/convert.lua
+          # Run the conversion script with Neovim
+          nvim --headless -u NONE -c "luafile build/convert.lua" -c "qa"
 
       - name: Update timestamp
         if: steps.fetch.outputs.has_changes == 'true'
