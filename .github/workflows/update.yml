@@ -140,4 +140,5 @@ jobs:
           labels: |
             automated
             dependencies
-          assignees: saifulapm
+          assignees: gaurav2361
+          reviewers: gaurav2361

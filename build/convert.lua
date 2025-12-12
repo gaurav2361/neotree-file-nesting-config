@@ -272,7 +272,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
     branch = 'v3.x',
     dependencies = {
       -- Others dependencies
-      'gaurav23617/neotree-file-nesting-config', -- add plugin as dependency. no need any other config or setup call
+      'gaurav2361/neotree-file-nesting-config', -- add plugin as dependency. no need any other config or setup call
     },
     opts = {
       -- recommanded config for better UI
