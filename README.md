@@ -2,7 +2,9 @@
 
 ![neotree-file-nesting-config](https://github.com/saifulapm/neotree-file-nesting-config/assets/3833316/88a6e479-e23d-40d2-a44b-b755c43ea666)
 
+
 A neovim implementation of the [vscode-file-nesting-config](https://github.com/antfu/vscode-file-nesting-config) with [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim).
+
 
 ## Use it
 
@@ -51,7 +53,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
 If you prefer not using plugin, you can copy rules and add your `neo-tree` config directly. But if you use plugin, you will get updates free.
 
 ```lua
--- updated 2025-12-11 03:06
+-- updated 2025-12-18 13:15
 {
   ['*.asax'] = {
     ['files'] = {
@@ -387,6 +389,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
   ['*.tsx'] = {
     ['files'] = {
       '$(capture)%.ts',
+      '$(capture)%.%.*%.ts',
       '$(capture)%.%.*%.tsx',
       '$(capture)_%.*%.ts',
       '$(capture)_%.*%.tsx',
@@ -1210,6 +1213,8 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '%.nodemon%.*',
       '%.npm%.*',
       '%.nvmrc',
+      '%.oxfmtrc%.json',
+      '%.oxfmtrc%.json%.bak',
       '%.oxlintrc%.json',
       '%.oxlintrc%.json%.bak',
       '%.pm2%.*',
@@ -1343,6 +1348,8 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '%.lintstagedrc%.*',
       '%.ls-lint%.yml',
       '%.markdownlint%.*',
+      '%.oxfmtrc%.json',
+      '%.oxfmtrc%.json%.bak',
       '%.oxlintrc%.json',
       '%.oxlintrc%.json%.bak',
       '%.pdm-python',
@@ -1619,6 +1626,8 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '%.nodemon%.*',
       '%.npm%.*',
       '%.nvmrc',
+      '%.oxfmtrc%.json',
+      '%.oxfmtrc%.json%.bak',
       '%.oxlintrc%.json',
       '%.oxlintrc%.json%.bak',
       '%.pm2%.*',
@@ -1956,3 +1965,4 @@ Instead, go to `build/convert.lua`, make changes and then submit a PR. Thanks!
 ## Credit & References
 
 - [vscode-file-nesting-config](https://github.com/antfu/vscode-file-nesting-config) - Who created all rules for vscode
+
