@@ -53,7 +53,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
 If you prefer not using plugin, you can copy rules and add your `neo-tree` config directly. But if you use plugin, you will get updates free.
 
 ```lua
--- updated 2025-12-18 13:15
+-- updated 2025-12-31 03:08
 {
   ['*.asax'] = {
     ['files'] = {
@@ -1215,8 +1215,10 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '%.nvmrc',
       '%.oxfmtrc%.json',
       '%.oxfmtrc%.json%.bak',
+      '%.oxfmtrc%.jsonc',
       '%.oxlintrc%.json',
       '%.oxlintrc%.json%.bak',
+      '%.oxlintrc%.jsonc',
       '%.pm2%.*',
       '%.pnp%.%.*',
       '%.pnpm%.*',
@@ -1350,8 +1352,10 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '%.markdownlint%.*',
       '%.oxfmtrc%.json',
       '%.oxfmtrc%.json%.bak',
+      '%.oxfmtrc%.jsonc',
       '%.oxlintrc%.json',
       '%.oxlintrc%.json%.bak',
+      '%.oxlintrc%.jsonc',
       '%.pdm-python',
       '%.pdm%.toml',
       '%.prettier%.*',
@@ -1628,8 +1632,10 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '%.nvmrc',
       '%.oxfmtrc%.json',
       '%.oxfmtrc%.json%.bak',
+      '%.oxfmtrc%.jsonc',
       '%.oxlintrc%.json',
       '%.oxlintrc%.json%.bak',
+      '%.oxlintrc%.jsonc',
       '%.pm2%.*',
       '%.pnp%.%.*',
       '%.pnpm%.*',
