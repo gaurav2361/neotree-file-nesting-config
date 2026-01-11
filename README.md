@@ -53,7 +53,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
 If you prefer not using plugin, you can copy rules and add your `neo-tree` config directly. But if you use plugin, you will get updates free.
 
 ```lua
--- updated 2025-12-31 03:08
+-- updated 2026-01-11 03:20
 {
   ['*.asax'] = {
     ['files'] = {
@@ -1280,6 +1280,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'nodemon%.*',
       'npm-shrinkwrap%.json',
       'nx%.%.*',
+      'oxlint%.config%.%.*',
       'package-lock%.json',
       'package%.nls%.*%.json',
       'phpcs%.xml',
@@ -1380,6 +1381,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'eslint%.*',
       'hatch%.toml',
       'lint-staged%.*',
+      'oxlint%.config%.%.*',
       'pdm%.lock',
       'phpcs%.xml',
       'poetry%.lock',
@@ -1697,6 +1699,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'nodemon%.*',
       'npm-shrinkwrap%.json',
       'nx%.%.*',
+      'oxlint%.config%.%.*',
       'package-lock%.json',
       'package%.nls%.*%.json',
       'phpcs%.xml',
