@@ -53,7 +53,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
 If you prefer not using plugin, you can copy rules and add your `neo-tree` config directly. But if you use plugin, you will get updates free.
 
 ```lua
--- updated 2026-01-11 03:20
+-- updated 2026-01-21 03:12
 {
   ['*.asax'] = {
     ['files'] = {
@@ -443,7 +443,6 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
   },
   ['+layout.svelte'] = {
     ['files'] = {
-      '+layout%.ts',
       '+layout%.ts',
       '+layout%.js',
       '+layout%.server%.ts',
@@ -1404,7 +1403,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
     },
     ['pattern'] = 'pyproject%.toml$',
   },
-  ['quasar.conf.js'] = {
+  ['quasar.conf*'] = {
     ['files'] = {
       '%.*%.env',
       '%.babelrc%.*',
@@ -1456,7 +1455,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'webpack%.config%.%.*',
       'windi%.config%.%.*',
     },
-    ['pattern'] = 'quasar%.conf%.js$',
+    ['pattern'] = 'quasar%.conf(.*)$',
   },
   ['readme*'] = {
     ['files'] = {

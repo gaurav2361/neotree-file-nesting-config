@@ -393,7 +393,6 @@ M.nesting_rules = {
   ['+layout.svelte'] = {
     ['files'] = {
       '+layout%.ts',
-      '+layout%.ts',
       '+layout%.js',
       '+layout%.server%.ts',
       '+layout%.server%.js',
@@ -1353,7 +1352,7 @@ M.nesting_rules = {
     },
     ['pattern'] = 'pyproject%.toml$',
   },
-  ['quasar.conf.js'] = {
+  ['quasar.conf*'] = {
     ['files'] = {
       '%.*%.env',
       '%.babelrc%.*',
@@ -1405,7 +1404,7 @@ M.nesting_rules = {
       'webpack%.config%.%.*',
       'windi%.config%.%.*',
     },
-    ['pattern'] = 'quasar%.conf%.js$',
+    ['pattern'] = 'quasar%.conf(.*)$',
   },
   ['readme*'] = {
     ['files'] = {
