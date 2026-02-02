@@ -53,7 +53,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
 If you prefer not using plugin, you can copy rules and add your `neo-tree` config directly. But if you use plugin, you will get updates free.
 
 ```lua
--- updated 2026-01-21 03:12
+-- updated 2026-02-01 04:06
 {
   ['*.asax'] = {
     ['files'] = {
@@ -460,6 +460,40 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '+page%.gql',
     },
     ['pattern'] = '%+page%.svelte$',
+  },
+  ['.agent'] = {
+    ['files'] = {
+      '%.agent',
+      '%.claude',
+      '%.cline',
+      '%.codebuddy',
+      '%.codex',
+      '%.commandcode',
+      '%.continue',
+      '%.crush',
+      '%.cursor',
+      '%.factory',
+      '%.gemini',
+      '%.goose',
+      '%.junie',
+      '%.kilocode',
+      '%.kiro',
+      '%.kode',
+      '%.mcpjam',
+      '%.mux',
+      '%.neovate',
+      '%.opencode',
+      '%.openhands',
+      '%.pi',
+      '%.pochi',
+      '%.qoder',
+      '%.qwen',
+      '%.roo',
+      '%.trae',
+      '%.windsurf',
+      '%.zencoder',
+    },
+    ['pattern'] = '%.agent$',
   },
   ['.clang-tidy'] = {
     ['files'] = {
