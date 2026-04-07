@@ -70,10 +70,16 @@ local function glob_to_lua_pattern(glob)
   local pattern = glob:gsub("([%.%+%-%^%$%(%)%%])", "%%%1")
 
   -- Convert glob wildcards to Lua patterns
-  pattern = pattern:gsub("%*", "(.*)") -- * becomes (.*)
+  pattern = pattern:gsub("%*", "(.*)")
 
-  -- Add end anchor
-  pattern = pattern .. "$"
+  -- Add anchors
+  if not glob:find("*") then
+    -- For exact filenames, anchor to start and end
+    pattern = "^" .. pattern .. "$"
+  else
+    -- For glob-like keys, anchor only to end
+    pattern = pattern .. "$"
+  end
 
   return pattern
 end
@@ -87,16 +93,22 @@ local function convert_file_list(file_str)
     -- Trim whitespace
     file = file:match("^%s*(.-)%s*$")
 
-    -- Convert to Lua pattern
-    local lua_pattern = file:gsub("%.", "%%.") -- Escape dots
-    lua_pattern = lua_pattern:gsub("%%1", "%%1") -- Keep %1 as is for capture
-    lua_pattern = lua_pattern:gsub("%*", "*") -- Keep * as glob
-    lua_pattern = lua_pattern:gsub("*", "%.*") -- Convert * to .*
+    -- Replace $(capture) with placeholder
+    local lua_pattern = file:gsub("%%$%((%w+)%)", "___CAPTURE___")
+    lua_pattern = lua_pattern:gsub("%$%(capture%)", "___CAPTURE___")
 
-    -- Re-do it properly
-    lua_pattern = file:gsub("%.", "%%.") -- Escape dots
-    lua_pattern = lua_pattern:gsub("%*", "%%.*") -- Convert * to .*
-    lua_pattern = lua_pattern:gsub("%%%%1", "%%1") -- Fix %1 captures
+    -- Use placeholder for glob *
+    lua_pattern = lua_pattern:gsub("%*", "___STAR___")
+
+    -- Now safely escape literal dots and other special characters
+    -- Special characters in Lua patterns: . % + - * ? [ ] ^ $ ( )
+    lua_pattern = lua_pattern:gsub("([%.%+%-%^%$%(%)%%])", "%%%1")
+
+    -- Convert glob ___STAR___ → Lua .* (any char, any times)
+    lua_pattern = lua_pattern:gsub("___STAR___", ".*")
+
+    -- Now convert placeholder back to %1 for Neo-tree
+    lua_pattern = lua_pattern:gsub("___CAPTURE___", "%%1")
 
     table.insert(files, lua_pattern)
   end
@@ -118,9 +130,22 @@ local function convert_to_neotree(vscode_patterns)
     local pattern = glob_to_lua_pattern(key)
     local files = convert_file_list(value)
 
+    -- Explicitly add pnpm files for package.json
+    if key == "package.json" then
+      local explicitly_needed = { "pnpm%-lock%.yaml", "pnpm%-workspace%.yaml", "package%-lock%.json" }
+      for _, f in ipairs(explicitly_needed) do
+        local found = false
+        for _, existing in ipairs(files) do
+          if existing == f then found = true break end
+        end
+        if not found then table.insert(files, 1, f) end
+      end
+    end
+
     neotree_rules[key] = {
       pattern = pattern,
       files = files,
+      priority = 1000, -- Extremely high priority to override system defaults
     }
 
     if should_ignore_case(key) then
