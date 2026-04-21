@@ -53,7 +53,7 @@ A neovim implementation of the [vscode-file-nesting-config](https://github.com/a
 If you prefer not using plugin, you can copy rules and add your `neo-tree` config directly. But if you use plugin, you will get updates free.
 
 ```lua
--- updated 2026-04-07 10:46
+-- updated 2026-04-21 04:23
 {
   ['*.asax'] = {
     ['files'] = {
@@ -641,6 +641,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       '.*%.dockerfile',
       '%.devcontainer%..*',
       '%.dockerignore',
+      'Dockerfile.*',
       'captain%-definition',
       'compose%..*',
       'docker%-compose%..*',
@@ -1034,6 +1035,28 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
     ['pattern'] = '^build%-wrapper%.log$',
     ['priority'] = 1000,
   },
+  ['build.gradle'] = {
+    ['files'] = {
+      'settings%.gradle',
+      'gradlew',
+      'gradlew%.bat',
+      'gradle%.properties',
+      'gradle%.lockfile',
+    },
+    ['pattern'] = '^build%.gradle$',
+    ['priority'] = 1000,
+  },
+  ['build.gradle.kts'] = {
+    ['files'] = {
+      'settings%.gradle%.kts',
+      'gradlew',
+      'gradlew%.bat',
+      'gradle%.properties',
+      'gradle%.lockfile',
+    },
+    ['pattern'] = '^build%.gradle%.kts$',
+    ['priority'] = 1000,
+  },
   ['composer.json'] = {
     ['files'] = {
       '%.php.*%.cache',
@@ -1396,6 +1419,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'nodemon.*',
       'npm%-shrinkwrap%.json',
       'nx%..*',
+      'oxfmt%.config%..*',
       'oxlint%.config%..*',
       'package%-lock%.json',
       'package%.nls.*%.json',
@@ -1500,6 +1524,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'eslint.*',
       'hatch%.toml',
       'lint%-staged.*',
+      'oxfmt%.config%..*',
       'oxlint%.config%..*',
       'pdm%.lock',
       'phpcs%.xml',
@@ -1823,6 +1848,7 @@ If you prefer not using plugin, you can copy rules and add your `neo-tree` confi
       'nodemon.*',
       'npm%-shrinkwrap%.json',
       'nx%..*',
+      'oxfmt%.config%..*',
       'oxlint%.config%..*',
       'package%-lock%.json',
       'package%.nls.*%.json',
